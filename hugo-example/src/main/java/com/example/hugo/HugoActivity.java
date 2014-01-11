@@ -24,7 +24,7 @@ public class HugoActivity extends Activity {
     startSleepyThread();
   }
 
-  @DebugLog
+  @DebugLog(tag = "Printing")
   private void printArgs(String... args) {
     for (String arg : args) {
       Log.i("Args", arg);

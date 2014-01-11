@@ -9,4 +9,7 @@ import static java.lang.annotation.RetentionPolicy.CLASS;
 
 @Target({METHOD, CONSTRUCTOR}) @Retention(CLASS)
 public @interface DebugLog {
+
+	String tag();
+	
 }

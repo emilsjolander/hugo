@@ -3,6 +3,7 @@ package hugo.weaving.internal;
 import android.os.Looper;
 import android.util.Log;
 import java.util.concurrent.TimeUnit;
+import java.lang.reflect.Method;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -57,7 +58,24 @@ public class Hugo {
       builder.append(" @Thread:").append(Thread.currentThread().getName());
     }
 
-    Log.d(asTag(clazz), builder.toString());
+    Log.d(chooseTag(clazz, methodName, parameterValues), builder.toString());
+  }
+
+  private static String chooseTag(Class<?> clazz, String methodName, Object[] parameterValues) {
+    Class<?>[] parameterTypes = new Class<?>[parameterValues.length];
+    for (int i = 0 ; i<parameterTypes.length ; i++) {
+      parameterTypes[i] = parameterValues[i].getClass();
+    }
+    try {
+      Method method = clazz.getMethod(methodName, parameterTypes);
+      if (method.isAnnotationPresent(hugo.weaving.DebugLog.class)) {
+        return method.getAnnotation(hugo.weaving.DebugLog.class).tag();
+      } else {
+        return asTag(clazz);
+      }
+    } catch (NoSuchMethodException e) {
+      return asTag(clazz);
+    }
   }
 
   private static boolean isMainThread() {
